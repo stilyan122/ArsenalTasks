@@ -17,7 +17,9 @@ namespace _04._02._2025
 
         public void Save(string filePath)
         {
-            File.WriteAllLines("../../../Output/"+filePath, logs);
+            logs.RemoveAt(0);
+            File.WriteAllLines("../../../Output/" + filePath, logs);
+            this.logs.Clear();
         }
     }
 }
