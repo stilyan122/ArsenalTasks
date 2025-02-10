@@ -1,7 +1,6 @@
 ﻿using _04._02._2025;
 
-ILog txtLogForPrint = new TextLogger();
-ILog txtLogForHistory = new TextLogger();
+ILog txtLogger = new TextLogger();
 ILog xlsxLog = new XlsxLogger();
 
 bool running = true;
@@ -19,7 +18,7 @@ while (running)
         case "create_team":
             try
             {
-                Team team = new Team(commandArgs[1], txtLogForHistory, txtLogForPrint);
+                Team team = new Team(commandArgs[1]);
                 teams.Add(team);
             }
             catch (IndexOutOfRangeException ex)
@@ -108,7 +107,11 @@ while (running)
 
                 if (typeOfLogger == "txt")
                 {
-                    teamToPrint.PrintTeam(filePathToPrint);
+                    teamToPrint.PrintTeam(filePathToPrint, txtLogger);
+                }
+                else
+                {
+                    teamToPrint.PrintTeam(filePathToPrint, xlsxLog);
                 }
             }
             catch (IndexOutOfRangeException ex)
@@ -128,7 +131,7 @@ while (running)
                 }
 
                 string filePath = commandArgs[2];
-                teamToPrintLog.PrintTeamHistory(filePath);
+                teamToPrintLog.PrintTeamHistory(filePath, txtLogger);
             }
             catch (IndexOutOfRangeException ex)
             {
@@ -136,7 +139,23 @@ while (running)
             }
             break;
         case "print_log_excel":
-            //...
+            try
+            {
+                Team teamToPrintLog = teams.FirstOrDefault(t => t.Name == commandArgs[1]);
+
+                if (teamToPrintLog == null)
+                {
+                    Console.WriteLine("Team not found!");
+                    continue;
+                }
+
+                string filePath = commandArgs[2];
+                teamToPrintLog.PrintTeamHistory(filePath, xlsxLog);
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                Console.WriteLine("Invalid number of parameters! " + ex.Message);
+            }
             break;
         case "exit":
             running = false;
