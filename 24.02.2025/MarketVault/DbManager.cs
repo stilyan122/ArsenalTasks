@@ -146,6 +146,23 @@
             }
         }
 
+        private int? GetOrderId(int orderNumber)
+        {
+            using (this.connection)
+            {
+                this.connection.Open();
+                string query = "SELECT OrderId FROM Orders WHERE OrderNumber = @orderNumber";
+
+                this.command = new(query, this.connection);
+
+                this.command.Parameters.AddWithValue("@orderNumber", orderNumber);
+
+                object result = this.command.ExecuteScalar();
+
+                return result != null ? (int?)result : null;
+            }
+        }
+
         public bool CreateDB()
         {
             if (!this.DatabaseExists())
@@ -175,7 +192,7 @@
                             ProductID INT PRIMARY KEY IDENTITY,
                             ProductName NVARCHAR(255) NOT NULL,
                             Price DECIMAL(10,2) NOT NULL,
-                            Stock INT NOT NULL,
+                            Stock DECIMAL(10,2) NOT NULL,
                             CategoryID INT,
                             FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
                         );
@@ -211,6 +228,7 @@
                         CREATE TABLE Orders (
                             OrderID INT PRIMARY KEY IDENTITY,
                             OrderDate DATETIME DEFAULT GETDATE(),
+                            OrderNumber INT,
                             CustomerID INT,
                             EmployeeID INT,
                             FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
@@ -220,7 +238,7 @@
                         CREATE TABLE OrderDetails (
                             OrderID INT,
                             ProductID INT,
-                            Quantity INT NOT NULL,
+                            Quantity DECIMAL(10,2) NOT NULL,
                             PRIMARY KEY (OrderID, ProductID),
                             FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
                             FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
@@ -259,7 +277,7 @@
             return false;
         }
 
-        public bool InsertProduct(string name, decimal price, int stock, string categoryName)
+        public bool InsertProduct(string name, decimal price, decimal stock, string categoryName)
         {
             int? categoryId = GetCategoryId(categoryName);
             if (DatabaseExists() &&  categoryId != null)
@@ -352,18 +370,59 @@
             return false;
         }
 
-        public bool InsertOrder(string customerName, string employeeName, DateTime date)
+        public bool InsertOrder(int orderNumber, string customerName, string employeeName, DateTime date)
         {
             int? customerId = GetCustomerId(customerName);
             int? employeeId = GetEmployeeId(employeeName);
 
             if (DatabaseExists() && customerId != null && employeeId != null)
             {
-                string query = "INSERT INTO Orders (CustomerID, EmployeeID, OrderDate) " +
-                    "VALUES (@customerId, @employeeId, @date)";
+                string query = "INSERT INTO Orders (OrderNumber, CustomerID, EmployeeID, OrderDate) " +
+                    "VALUES (@orderNumber, @customerId, @employeeId, @date)";
 
-                List<string> parameters = new() { "@customerId", "@employeeId", "@date" };
-                List<object> values = new() { customerId, employeeId, date };
+                List<string> parameters = new() { "@orderNumber", "@customerId", "@employeeId", "@date" };
+                List<object> values = new() { orderNumber, customerId, employeeId, date };
+
+                this.ExecuteNonQueryWithParameters(query, parameters, values);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool InsertOrderDetails(string productName, int orderNumber, decimal quantity)
+        {
+            int? productId = GetProductId(productName);
+            int? orderId = GetOrderId(orderNumber);
+
+            if (DatabaseExists() && productId != null && orderId != null)
+            {
+                string query = "INSERT INTO OrderDetails (OrderID, ProductID, Quantity) " +
+                    "VALUES (@orderId, @productId, @quantity)";
+
+                List<string> parameters = new() { "@orderId", "@productId", "@quantity" };
+                List<object> values = new() { orderId, productId, quantity };
+
+                this.ExecuteNonQueryWithParameters(query, parameters, values);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool InsertPayment(int orderNumber, string paymentMethod, decimal amountPaid)
+        {
+            int? orderId = GetOrderId(orderNumber);
+
+            if (DatabaseExists() && orderId != null)
+            {
+                string query = "INSERT INTO Payments (OrderID, PaymentMethod, AmountPaid) " +
+                    "VALUES (@orderId, @paymentMethod, @amountPaid)";
+
+                List<string> parameters = new() { "@orderId", "@paymentMethod", "@amountPaid" };
+                List<object> values = new() { orderId, paymentMethod, amountPaid };
 
                 this.ExecuteNonQueryWithParameters(query, parameters, values);
 

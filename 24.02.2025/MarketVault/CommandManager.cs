@@ -16,6 +16,15 @@
             Console.WriteLine("0: End App");
             Console.WriteLine("1: Initialize DB");
             Console.WriteLine("2: Initialize Tables in DB");
+            Console.WriteLine("3: Insert Category in DB");
+            Console.WriteLine("4: Insert Product in DB");
+            Console.WriteLine("5: Insert Customer in DB");
+            Console.WriteLine("6: Insert Employee in DB");
+            Console.WriteLine("7: Insert Supplier in DB");
+            Console.WriteLine("8: Insert ProductSupplier in DB");
+            Console.WriteLine("9: Insert Order in DB");
+            Console.WriteLine("10: Insert Order Details in DB");
+            Console.WriteLine("11: Insert Payment in DB");
 
             int number = -1;
             while (number != 0)
@@ -48,14 +57,102 @@
                             }
                             break;
                         case 3:
-                            bool result3 = this.dbManager.CreateTables();
+                            bool result3 = this.InsertCategory();
                             if (result3)
                             {
-                                Console.WriteLine("Tables in MarketVault successfully initialized!");
+                                Console.WriteLine("Category successfully inserted!");
                             }
                             else
                             {
-                                Console.WriteLine("No db created! Please create your DB!");
+                                Console.WriteLine("Category cannot be inserted");
+                            }
+                            break;
+                        case 4:
+                            bool result4 = this.InsertProduct();
+                            if (result4)
+                            {
+                                Console.WriteLine("Product successfully inserted!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Product cannot be inserted");
+                            }
+                            break;
+                        case 5:
+                            bool result5 = this.InsertCustomer();
+                            if (result5)
+                            {
+                                Console.WriteLine("Customer successfully inserted!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Customer cannot be inserted");
+                            }
+                            break;
+                        case 6:
+                            bool result6 = this.InsertEmployee();
+                            if (result6)
+                            {
+                                Console.WriteLine("Employee successfully inserted!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Employee cannot be inserted");
+                            }
+                            break;
+                        case 7:
+                            bool result7 = this.InsertSupplier();
+                            if (result7)
+                            {
+                                Console.WriteLine("Supplier successfully inserted!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Supplier cannot be inserted");
+                            }
+                            break;
+                        case 8:
+                            bool result8 = this.InsertProductSupplier();
+                            if (result8)
+                            {
+                                Console.WriteLine("ProductSupplier successfully inserted!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("ProductSupplier cannot be inserted");
+                            }
+                            break;
+                        case 9:
+                            bool result9 = this.InsertOrder();
+                            if (result9)
+                            {
+                                Console.WriteLine("Order successfully inserted!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Order cannot be inserted");
+                            }
+                            break;
+                        case 10:
+                            bool result10 = this.InsertOrderDetails();
+                            if (result10)
+                            {
+                                Console.WriteLine("Order Details successfully inserted!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Order Details cannot be inserted");
+                            }
+                            break;
+                        case 11:
+                            bool result11 = this.InsertPayment();
+                            if (result11)
+                            {
+                                Console.WriteLine("Payment successfully inserted!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Payment cannot be inserted");
                             }
                             break;
                     }
@@ -65,6 +162,173 @@
                     Console.WriteLine("Invalid number format, try again");
                 }
             }
+        }
+
+        private bool InsertCategory()
+        {
+            try
+            {
+                Console.Write("Type category name: ");
+                return this.dbManager.InsertCategory(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
+        }
+        private bool InsertProduct()
+        {
+            try
+            {
+                Console.Write("Type product name: ");
+                string name = Console.ReadLine();
+                Console.Write("Type product price: ");
+                decimal price = decimal.Parse(Console.ReadLine());
+                Console.Write("Type product stock: ");
+                decimal stock = decimal.Parse(Console.ReadLine());
+                Console.Write("Type product category name: ");
+                string categoryName = Console.ReadLine();
+                return this.dbManager.InsertProduct(name, price, stock, categoryName);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
+        }
+        private bool InsertCustomer()
+        {
+            try
+            {
+                Console.Write("Type customer full name: ");
+                string name = Console.ReadLine();
+                Console.Write("Type customer phone number: ");
+                string phone = Console.ReadLine();
+                Console.Write("Type customer email number: ");
+                string email = Console.ReadLine();
+                return this.dbManager.InsertCustomer(name, phone, email);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
+        }
+        private bool InsertEmployee()
+        {
+            try
+            {
+                Console.Write("Type employee full name: ");
+                string name = Console.ReadLine();
+                Console.Write("Type employee position: ");
+                string position = Console.ReadLine();
+                Console.Write("Type employee salary: ");
+                decimal salary = decimal.Parse(Console.ReadLine());
+                return this.dbManager.InsertEmployee(name, position, salary);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
+        }
+        private bool InsertSupplier()
+        {
+            try
+            {
+                Console.Write("Type supplier full name: ");
+                string name = Console.ReadLine();
+                Console.Write("Type supplier position: ");
+                string email = Console.ReadLine();
+                return this.dbManager.InsertSupplier(name, email);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
+        }
+        private bool InsertProductSupplier()
+        {
+            try
+            {
+                Console.Write("Type product name: ");
+                string productName = Console.ReadLine();
+                Console.Write("Type supplier name: ");
+                string supplierName = Console.ReadLine();
+                return this.dbManager.InsertProductSupplier(productName, supplierName);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
+        }
+        private bool InsertOrder()
+        {
+            try
+            {
+                Console.Write("Type order number: ");
+                int orderNumber = int.Parse(Console.ReadLine();
+                Console.Write("Type customer name: ");
+                string customerName = Console.ReadLine();
+                Console.Write("Type employee name: ");
+                string employeeName = Console.ReadLine();
+                Console.Write("Type date made (yyyy-MM-dd) format: ");
+                DateTime dateMade = DateTime.Parse(Console.ReadLine());
+                return this.dbManager.InsertOrder(orderNumber, customerName, employeeName, dateMade);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
+        }
+        private bool InsertOrderDetails()
+        {
+            try
+            {
+                Console.Write("Type product name: ");
+                string productName = Console.ReadLine();
+                Console.Write("Type order number: ");
+                int orderNumber = int.Parse(Console.ReadLine();
+                Console.Write("Type order quantity: ");
+                decimal quantity = decimal.Parse(Console.ReadLine());
+                return this.dbManager.InsertOrderDetails(productName, orderNumber, quantity);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
+        }
+        private bool InsertPayment()
+        {
+            try
+            {
+                Console.Write("Type order number: ");
+                int orderNumber = int.Parse(Console.ReadLine());
+                Console.Write("Type payment method: ");
+                string paymentMethod = Console.ReadLine();
+                Console.Write("Type amount paid: ");
+                decimal amountPaid = decimal.Parse(Console.ReadLine());
+                return this.dbManager.InsertPayment(orderNumber, paymentMethod, amountPaid);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid number of parameters or parameters format!");
+            }
+
+            return true;
         }
     }
 }
