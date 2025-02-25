@@ -1,0 +1,206 @@
+CREATE DATABASE CarsShowroom;
+
+USE CarsShowroom;
+
+CREATE TABLE Categories
+(
+	Id INT PRIMARY KEY IDENTITY,
+	[Name] NVARCHAR(MAX) NOT NULL
+);
+
+CREATE TABLE Engines
+(
+	Id INT PRIMARY KEY IDENTITY,
+	[Name] NVARCHAR(MAX) NOT NULL
+);
+
+CREATE TABLE Cars
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Brand NVARCHAR(MAX) NOT NULL,
+	Model NVARCHAR(MAX) NOT NULL,
+	Color NVARCHAR(MAX) NOT NULL,
+	CategoryId INT FOREIGN KEY REFERENCES Categories(Id),
+	EngineId INT FOREIGN KEY REFERENCES Engines(Id),
+	YearOfProduce INT,
+	Price DECIMAL
+);
+
+CREATE TABLE Clients
+(
+	Id INT PRIMARY KEY IDENTITY,
+	FirstName NVARCHAR(MAX) NOT NULL,
+	LastName NVARCHAR(MAX) NOT NULL,
+	PhoneNumber VARCHAR(10)
+);
+
+CREATE TABLE Sales
+(
+	CarId INT REFERENCES Cars(Id),
+	ClientId INT REFERENCES Clients(Id),
+	DateMade DATETIME,
+	PRIMARY KEY(CarId, ClientId)
+);
+
+INSERT INTO Categories
+([Name])
+VALUES
+('Ван'), ('Джип'), ('Кабрио'), 
+('Комби'), ('Купе'),
+('Миниван'), ('Пикап'), ('Седан'), 
+('Стреч лимузина'), ('Хечбек');
+
+INSERT INTO Engines
+([Name])
+VALUES
+('Бензинов'), ('Дизелов'), ('Електрически'),
+('Хибриден'), ('Plug-In Хибрид');
+
+INSERT INTO Cars
+(Brand, Model, CategoryId, EngineId, Color, YearOfProduce, Price)
+VALUES
+('VW', 'Golf', 1, 1, 'Черен', 2022, 20000),
+('Audi', 'A3', 2, 2, 'Сив', 2021, 25000),
+('BMW', '3 Series', 2, 1, 'Бял', 2020, 30000),
+('Mercedes-Benz', 'C-Class', 2, 1, 'Бял', 2022, 35000),
+('Toyota', 'Corolla', 1, 3, 'Сив', 2021, 22000),
+('Audi', 'A5', 1, 1, 'Черен', 2020, 32000),
+('BMW', '6 Series', 1, 2, 'Черен', 2019, 35000),
+('Audi', 'A8', 3, 1, 'Черен мат', 2023, 75000),
+('Mercedes-Benz', 'G 500', 2, 3, 'Черен', 2022, 68000),
+('Peugeot', '308', 1, 2, 'Син', 2022, 23000);
+
+INSERT INTO Clients
+(FirstName, LastName, PhoneNumber)
+VALUES
+('Иван', 'Иванов', '0888123456'),
+('Петър', 'Петров', '0899123456'),
+('Георги', 'Георгиев', '0877123456'),
+('Мартин', 'Маринов', '0885123456'),
+('Алекс', 'Александров', '0897123456'),
+('Борис', 'Борисов', '0886123456'),
+('Кирил', 'Кирилов', '0876123456'),
+('Даниел', 'Данев', '0896123456'),
+('Стоян', 'Стоянов', '0884123456'),
+('Николай', 'Николов', '0875123456');
+
+INSERT INTO Sales
+(CarId, ClientId, DateMade)
+VALUES
+(6, 8, '2022-01-16'),
+(2, 3, '2022-02-09'),
+(5, 1, '2022-11-30'),
+(7, 4, '2022-04-19'),
+(1, 6, '2023-05-21');
+
+--01.
+SELECT * 
+FROM Cars;
+
+--02.
+SELECT * 
+FROM Cars
+WHERE YearOfProduce < 2020;
+
+--03.
+SELECT c.Model, c.Color, 
+c.YearOfProduce, c.Price
+FROM Cars AS c
+WHERE Brand = 'Audi';
+
+--04.
+SELECT c.Brand, c.Model,
+c.YearOfProduce, c.Price
+FROM Cars AS c
+JOIN Engines AS e
+ON c.EngineId = e.Id
+WHERE e.[Name] = 'Бензинов';
+
+--05.
+SELECT c.Brand, c.Model,
+c.YearOfProduce, c.Price
+FROM Cars AS c
+JOIN Categories AS ca
+ON c.EngineId = ca.Id
+WHERE ca.[Name] = 'Ван';
+
+--06.
+SELECT *
+FROM Cars AS c
+WHERE c.Color = 'Черен' 
+OR 	  c.Color = 'Син';
+
+--07.
+SELECT TOP 1 c.Brand,
+c.Model, c.YearOfProduce, c.Price
+FROM Cars AS c
+ORDER BY c.Price;
+
+--08.
+SELECT c.Brand, c.Model,
+c.Color, c.YearOfProduce, c.Price
+FROM Cars AS c
+JOIN Engines AS e
+ON e.Id = c.EngineId
+WHERE e.[Name] = 'Бензинов'
+ORDER BY c.Price DESC;
+
+--09.
+SELECT c.Brand, c.Model,
+ca.[Name] AS 'Category', c.YearOfProduce, c.Price
+FROM Cars AS c
+JOIN Categories AS ca
+ON ca.Id = c.CategoryId
+WHERE ca.[Name] = 'Ван';
+
+--10.
+SELECT (cl.FirstName + ' ' + cl.LastName) AS 'Client name',
+c.Brand, c.Model, c.Color, c.Price
+FROM Clients AS cl
+JOIN Sales AS s
+ON s.ClientId = cl.Id
+JOIN Cars AS c
+ON c.Id = s.CarId
+ORDER BY c.Brand, c.Price DESC;
+
+--11.
+SELECT c.Brand, c.Model,
+c.YearOfProduce, c.Price,
+ca.[Name] AS 'Category'
+FROM Cars AS c
+JOIN Categories AS ca
+ON ca.Id = c.CategoryId
+WHERE ca.[Name] = 'Джип' AND 
+c.Price BETWEEN 20000 AND 30000;
+
+--12.
+SELECT cl.FirstName, cl.LastName,
+c.Brand, c.Model, c.Color, c.Price
+FROM Clients AS cl
+JOIN Sales AS s
+ON s.ClientId = cl.Id
+JOIN Cars AS c
+ON c.Id = s.CarId
+WHERE c.Color = 'Черен'
+ORDER BY c.Price;
+
+--13.
+SELECT c.Id, c.[Name]
+FROM Categories AS c
+FULL OUTER JOIN Cars AS ca
+ON ca.CategoryId = c.Id
+WHERE ca.Id IS NULL;
+
+--14.
+SELECT cl.FirstName, cl.LastName,
+s.DateMade
+FROM Clients AS cl
+FULL OUTER JOIN Sales AS s
+ON cl.Id = s.ClientId;
+
+--15.
+SELECT cl.FirstName, cl.LastName
+FROM Clients AS cl
+FULL OUTER JOIN Sales AS s
+ON cl.Id = s.ClientId
+WHERE s.CarId IS NULL;
