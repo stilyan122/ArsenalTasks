@@ -1,28 +1,20 @@
 ﻿namespace MarketVault
 {
     using Microsoft.Data.SqlClient;
-    using System.Xml.Linq;
 
     public class DbManager
     {
         // Change connection string according to yours
-        private string connectionString = 
-            @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        private string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;" +
+            "Integrated Security=True;Trust Server Certificate=True;" +
+            "Initial Catalog=master;";
         private SqlConnection connection;
         private SqlCommand command;
 
-        public DbManager()
-        {
-            this.connection = new(connectionString);
-            if (!this.connectionString.Contains("Database"))
-            {
-                this.connectionString += "Database=MarketVault";
-            }
-        }
-
+        #region ExecuteMethods
         private void ExecuteNonQueryWithoutParameters(string query)
         {
-            using (this.connection)
+            using (this.connection = new SqlConnection(this.connectionString))
             {
                 this.connection.Open();
                 this.command = new(query, connection);
@@ -33,7 +25,7 @@
         private void ExecuteNonQueryWithParameters(string query, List<string> parameters,
             List<object> values)
         {
-            using (this.connection)
+            using (this.connection = new SqlConnection(this.connectionString))
             {
                 this.connection.Open();
                 this.command = new(query, connection);
@@ -47,23 +39,56 @@
             }
         }
 
+        #endregion
+
         private bool DatabaseExists()
         {
-            using (this.connection)
+            try
             {
-                this.connection.Open();
-                string query = "SELECT COUNT(*) FROM sys.databases WHERE name = MarketVault";
-                this.command = new(query, this.connection);
+                using (this.connection = new SqlConnection(this.connectionString))
+                {
+                    this.connection.Open();
+                    string query = "SELECT COUNT(*) FROM sys.databases WHERE name = 'MarketVault'";
+                    this.command = new(query, this.connection);
 
-                int count = (int)command.ExecuteScalar();
+                    int count = (int)command.ExecuteScalar();
 
-                return count > 0;
+                    return count > 0;
+                }
             }
+            catch (Exception)
+            {
+
+            }
+
+            return false;
         }
 
+        public bool UseDB()
+        {
+            if (this.DatabaseExists())
+            {
+                if (this.connectionString.Contains("Initial Catalog"))
+                {
+                    this.connectionString = 
+                        this.connectionString.Replace("Initial Catalog=master",
+                        "Initial Catalog=MarketVault");
+                }
+                else
+                {
+                    this.connectionString += "Initial Catalog=MarketVault";
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        #region GetIdMethods
         private int? GetCategoryId(string name)
         {
-            using (this.connection)
+            using (this.connection = new SqlConnection(this.connectionString))
             {
                 this.connection.Open();
                 string query = "SELECT CategoryID FROM Categories WHERE CategoryName = @categoryName";
@@ -80,7 +105,7 @@
 
         private int? GetProductId(string name)
         {
-            using (this.connection)
+            using (this.connection = new SqlConnection(this.connectionString))
             {
                 this.connection.Open();
                 string query = "SELECT ProductId FROM Products WHERE ProductName = @productName";
@@ -97,7 +122,7 @@
 
         private int? GetSupplierId(string name)
         {
-            using (this.connection)
+            using (this.connection = new SqlConnection(this.connectionString))
             {
                 this.connection.Open();
                 string query = "SELECT SupplierId FROM Suppliers WHERE SupplierName = @supplierName";
@@ -114,7 +139,7 @@
 
         private int? GetCustomerId(string name)
         {
-            using (this.connection)
+            using (this.connection = new SqlConnection(this.connectionString))
             {
                 this.connection.Open();
                 string query = "SELECT CustomerId FROM Customers WHERE FullName = @fullName";
@@ -131,7 +156,7 @@
 
         private int? GetEmployeeId(string name)
         {
-            using (this.connection)
+            using (this.connection = new SqlConnection(this.connectionString))
             {
                 this.connection.Open();
                 string query = "SELECT EmployeeId FROM Employees WHERE FullName = @fullName";
@@ -148,7 +173,7 @@
 
         private int? GetOrderId(int orderNumber)
         {
-            using (this.connection)
+            using (this.connection = new SqlConnection(this.connectionString))
             {
                 this.connection.Open();
                 string query = "SELECT OrderId FROM Orders WHERE OrderNumber = @orderNumber";
@@ -162,14 +187,20 @@
                 return result != null ? (int?)result : null;
             }
         }
+        #endregion
+
+        #region CreateMethods
 
         public bool CreateDB()
         {
             if (!this.DatabaseExists())
             {
-                string query = @"CREATE DATABASE MarketVault;
+                string query = @"CREATE DATABASE MarketVault;";
 
-                            USE MarketVault;";
+                if (!this.connectionString.Contains("Initial Catalog"))
+                {
+                    this.connectionString += "Initial Catalog=MarketVault";
+                }
 
                 this.ExecuteNonQueryWithoutParameters(query);
 
@@ -183,75 +214,101 @@
         {
             if (this.DatabaseExists())
             {
-                string query = @"CREATE TABLE Categories (
-                            CategoryID INT PRIMARY KEY IDENTITY,
-                            CategoryName NVARCHAR(100) NOT NULL
-                        );
+                string query = @"IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Categories')
+                        BEGIN
+                            CREATE TABLE Categories (
+                                CategoryID INT PRIMARY KEY IDENTITY,
+                                CategoryName NVARCHAR(100) NOT NULL
+                            );
+                        END
 
-                        CREATE TABLE Products (
-                            ProductID INT PRIMARY KEY IDENTITY,
-                            ProductName NVARCHAR(255) NOT NULL,
-                            Price DECIMAL(10,2) NOT NULL,
-                            Stock DECIMAL(10,2) NOT NULL,
-                            CategoryID INT,
-                            FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
-                        );
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Products')
+                        BEGIN
+                            CREATE TABLE Products (
+                                ProductID INT PRIMARY KEY IDENTITY,
+                                ProductName NVARCHAR(255) NOT NULL,
+                                Price DECIMAL(10,2) NOT NULL,
+                                Stock DECIMAL(10,2) NOT NULL,
+                                CategoryID INT,
+                                FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+                            );
+                        END
 
-                        CREATE TABLE Suppliers (
-                            SupplierID INT PRIMARY KEY IDENTITY,
-                            SupplierName NVARCHAR(255) NOT NULL,
-                            ContactEmail NVARCHAR(255)
-                        );
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Suppliers')
+                        BEGIN
+                            CREATE TABLE Suppliers (
+                                SupplierID INT PRIMARY KEY IDENTITY,
+                                SupplierName NVARCHAR(255) NOT NULL,
+                                ContactEmail NVARCHAR(255)
+                            );
+                        END
 
-                        CREATE TABLE ProductSuppliers (
-                            ProductID INT,
-                            SupplierID INT,
-                            PRIMARY KEY (ProductID, SupplierID),
-                            FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
-                            FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID)
-                        );
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductSuppliers')
+                        BEGIN
+                            CREATE TABLE ProductSuppliers (
+                                ProductID INT,
+                                SupplierID INT,
+                                PRIMARY KEY (ProductID, SupplierID),
+                                FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+                                FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID)
+                            );
+                        END
 
-                        CREATE TABLE Customers (
-                            CustomerID INT PRIMARY KEY IDENTITY,
-                            FullName NVARCHAR(255) NOT NULL,
-                            Phone NVARCHAR(20) NOT NULL,
-                            Email NVARCHAR(255) UNIQUE
-                        );
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Customers')
+                        BEGIN
+                            CREATE TABLE Customers (
+                                CustomerID INT PRIMARY KEY IDENTITY,
+                                FullName NVARCHAR(255) NOT NULL,
+                                Phone NVARCHAR(20) NOT NULL,
+                                Email NVARCHAR(255) UNIQUE
+                            );
+                        END
 
-                        CREATE TABLE Employees (
-                            EmployeeID INT PRIMARY KEY IDENTITY,
-                            FullName NVARCHAR(255) NOT NULL,
-                            Position NVARCHAR(100),
-                            Salary DECIMAL(10,2)
-                        );
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Employees')
+                        BEGIN
+                            CREATE TABLE Employees (
+                                EmployeeID INT PRIMARY KEY IDENTITY,
+                                FullName NVARCHAR(255) NOT NULL,
+                                Position NVARCHAR(100),
+                                Salary DECIMAL(10,2)
+                            );
+                        END
 
-                        CREATE TABLE Orders (
-                            OrderID INT PRIMARY KEY IDENTITY,
-                            OrderDate DATETIME DEFAULT GETDATE(),
-                            OrderNumber INT,
-                            CustomerID INT,
-                            EmployeeID INT,
-                            FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
-                            FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
-                        );
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Orders')
+                        BEGIN
+                            CREATE TABLE Orders (
+                                OrderID INT PRIMARY KEY IDENTITY,
+                                OrderDate DATETIME DEFAULT GETDATE(),
+                                OrderNumber INT,
+                                CustomerID INT,
+                                EmployeeID INT,
+                                FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+                                FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+                            );
+                        END
 
-                        CREATE TABLE OrderDetails (
-                            OrderID INT,
-                            ProductID INT,
-                            Quantity DECIMAL(10,2) NOT NULL,
-                            PRIMARY KEY (OrderID, ProductID),
-                            FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
-                            FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
-                        );
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'OrderDetails')
+                        BEGIN
+                            CREATE TABLE OrderDetails (
+                                OrderID INT,
+                                ProductID INT,
+                                Quantity DECIMAL(10,2) NOT NULL,
+                                PRIMARY KEY (OrderID, ProductID),
+                                FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+                                FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+                            );
+                        END
 
-                        CREATE TABLE Payments (
-                            PaymentID INT PRIMARY KEY IDENTITY,
-                            OrderID INT UNIQUE,
-                            PaymentMethod NVARCHAR(50),
-                            AmountPaid DECIMAL(10,2) NOT NULL,
-                            FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
-                        );
-                        ";
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Payments')
+                        BEGIN
+                            CREATE TABLE Payments (
+                                PaymentID INT PRIMARY KEY IDENTITY,
+                                OrderID INT UNIQUE,
+                                PaymentMethod NVARCHAR(50),
+                                AmountPaid DECIMAL(10,2) NOT NULL,
+                                FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+                            );
+                        END";
 
                 this.ExecuteNonQueryWithoutParameters(query);
                 return true;
@@ -260,6 +317,9 @@
             return false;
         }
 
+        #endregion
+
+        #region InsertMethods
         public bool InsertCategory(string name)
         {
             if (DatabaseExists())
@@ -280,13 +340,13 @@
         public bool InsertProduct(string name, decimal price, decimal stock, string categoryName)
         {
             int? categoryId = GetCategoryId(categoryName);
-            if (DatabaseExists() &&  categoryId != null)
+            if (DatabaseExists() && categoryId != null)
             {
                 string query = "INSERT INTO Products (ProductName, Price, Stock, CategoryID) " +
                     "VALUES (@productName, @price, @stock, @categoryId)";
 
                 List<string> parameters = new() { "@productName", "@price", "@stock", @"categoryId" };
-                List<object> values = new() { name, price, stock, categoryId};
+                List<object> values = new() { name, price, stock, categoryId };
 
                 this.ExecuteNonQueryWithParameters(query, parameters, values);
 
@@ -339,7 +399,7 @@
                 string query = "INSERT INTO Suppliers (SupplierName, ContactEmail) " +
                     "VALUES (@supplierName, @contactEmail)";
 
-                List<string> parameters = new() { "@supplierName", "@contactEmail"};
+                List<string> parameters = new() { "@supplierName", "@contactEmail" };
                 List<object> values = new() { name, email };
 
                 this.ExecuteNonQueryWithParameters(query, parameters, values);
@@ -431,5 +491,6 @@
 
             return false;
         }
+        #endregion
     }
 }

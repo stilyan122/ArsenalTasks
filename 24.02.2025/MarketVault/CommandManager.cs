@@ -16,15 +16,16 @@
             Console.WriteLine("0: End App");
             Console.WriteLine("1: Initialize DB");
             Console.WriteLine("2: Initialize Tables in DB");
-            Console.WriteLine("3: Insert Category in DB");
-            Console.WriteLine("4: Insert Product in DB");
-            Console.WriteLine("5: Insert Customer in DB");
-            Console.WriteLine("6: Insert Employee in DB");
-            Console.WriteLine("7: Insert Supplier in DB");
-            Console.WriteLine("8: Insert ProductSupplier in DB");
-            Console.WriteLine("9: Insert Order in DB");
-            Console.WriteLine("10: Insert Order Details in DB");
-            Console.WriteLine("11: Insert Payment in DB");
+            Console.WriteLine("3: Use MarketVault DB");
+            Console.WriteLine("4: Insert Category in DB");
+            Console.WriteLine("5: Insert Product in DB");
+            Console.WriteLine("6: Insert Customer in DB");
+            Console.WriteLine("7: Insert Employee in DB");
+            Console.WriteLine("8: Insert Supplier in DB");
+            Console.WriteLine("9: Insert ProductSupplier in DB");
+            Console.WriteLine("10: Insert Order in DB");
+            Console.WriteLine("11: Insert Order Details in DB");
+            Console.WriteLine("12: Insert Payment in DB");
 
             int number = -1;
             while (number != 0)
@@ -57,8 +58,19 @@
                             }
                             break;
                         case 3:
-                            bool result3 = this.InsertCategory();
+                            bool result3 = this.dbManager.UseDB();
                             if (result3)
+                            {
+                                Console.WriteLine("DB MarketVault successfully used!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Cannot use DB! Make sure it exists!");
+                            }
+                            break;
+                        case 4:
+                            bool result4 = this.InsertCategory();
+                            if (result4)
                             {
                                 Console.WriteLine("Category successfully inserted!");
                             }
@@ -67,9 +79,9 @@
                                 Console.WriteLine("Category cannot be inserted");
                             }
                             break;
-                        case 4:
-                            bool result4 = this.InsertProduct();
-                            if (result4)
+                        case 5:
+                            bool result5 = this.InsertProduct();
+                            if (result5)
                             {
                                 Console.WriteLine("Product successfully inserted!");
                             }
@@ -78,9 +90,9 @@
                                 Console.WriteLine("Product cannot be inserted");
                             }
                             break;
-                        case 5:
-                            bool result5 = this.InsertCustomer();
-                            if (result5)
+                        case 6:
+                            bool result6 = this.InsertCustomer();
+                            if (result6)
                             {
                                 Console.WriteLine("Customer successfully inserted!");
                             }
@@ -89,9 +101,9 @@
                                 Console.WriteLine("Customer cannot be inserted");
                             }
                             break;
-                        case 6:
-                            bool result6 = this.InsertEmployee();
-                            if (result6)
+                        case 7:
+                            bool result7 = this.InsertEmployee();
+                            if (result7)
                             {
                                 Console.WriteLine("Employee successfully inserted!");
                             }
@@ -100,9 +112,9 @@
                                 Console.WriteLine("Employee cannot be inserted");
                             }
                             break;
-                        case 7:
-                            bool result7 = this.InsertSupplier();
-                            if (result7)
+                        case 8:
+                            bool result8 = this.InsertSupplier();
+                            if (result8)
                             {
                                 Console.WriteLine("Supplier successfully inserted!");
                             }
@@ -111,9 +123,9 @@
                                 Console.WriteLine("Supplier cannot be inserted");
                             }
                             break;
-                        case 8:
-                            bool result8 = this.InsertProductSupplier();
-                            if (result8)
+                        case 9:
+                            bool result9 = this.InsertProductSupplier();
+                            if (result9)
                             {
                                 Console.WriteLine("ProductSupplier successfully inserted!");
                             }
@@ -122,9 +134,9 @@
                                 Console.WriteLine("ProductSupplier cannot be inserted");
                             }
                             break;
-                        case 9:
-                            bool result9 = this.InsertOrder();
-                            if (result9)
+                        case 10:
+                            bool result10 = this.InsertOrder();
+                            if (result10)
                             {
                                 Console.WriteLine("Order successfully inserted!");
                             }
@@ -133,9 +145,9 @@
                                 Console.WriteLine("Order cannot be inserted");
                             }
                             break;
-                        case 10:
-                            bool result10 = this.InsertOrderDetails();
-                            if (result10)
+                        case 11:
+                            bool result11 = this.InsertOrderDetails();
+                            if (result11)
                             {
                                 Console.WriteLine("Order Details successfully inserted!");
                             }
@@ -144,9 +156,9 @@
                                 Console.WriteLine("Order Details cannot be inserted");
                             }
                             break;
-                        case 11:
-                            bool result11 = this.InsertPayment();
-                            if (result11)
+                        case 12:
+                            bool result12 = this.InsertPayment();
+                            if (result12)
                             {
                                 Console.WriteLine("Payment successfully inserted!");
                             }
@@ -164,6 +176,7 @@
             }
         }
 
+        #region InsertCommands
         private bool InsertCategory()
         {
             try
@@ -276,7 +289,7 @@
             try
             {
                 Console.Write("Type order number: ");
-                int orderNumber = int.Parse(Console.ReadLine();
+                int orderNumber = int.Parse(Console.ReadLine());
                 Console.Write("Type customer name: ");
                 string customerName = Console.ReadLine();
                 Console.Write("Type employee name: ");
@@ -299,7 +312,7 @@
                 Console.Write("Type product name: ");
                 string productName = Console.ReadLine();
                 Console.Write("Type order number: ");
-                int orderNumber = int.Parse(Console.ReadLine();
+                int orderNumber = int.Parse(Console.ReadLine());
                 Console.Write("Type order quantity: ");
                 decimal quantity = decimal.Parse(Console.ReadLine());
                 return this.dbManager.InsertOrderDetails(productName, orderNumber, quantity);
@@ -330,5 +343,6 @@
 
             return true;
         }
+        #endregion
     }
 }
