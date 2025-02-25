@@ -1,4 +1,6 @@
-﻿namespace MarketVault
+﻿using Microsoft.Data.SqlClient;
+
+namespace MarketVault
 {
     public class CommandManager
     {
@@ -11,6 +13,7 @@
 
         public void StartApp()
         {
+            Console.WriteLine("===========================================================================================");
             Console.WriteLine("Welcome to MarketVault App!");
             Console.WriteLine("Please choose from the following commands:");
             Console.WriteLine("0: End App");
@@ -26,12 +29,28 @@
             Console.WriteLine("10: Insert Order in DB");
             Console.WriteLine("11: Insert Order Details in DB");
             Console.WriteLine("12: Insert Payment in DB");
+            Console.WriteLine("13: Select all categories in DB");
+            Console.WriteLine("14: Select all customers in DB");
+            Console.WriteLine("15: Select all employees in DB");
+            Console.WriteLine("16: Select all orders along with their customers and employees in DB");
+            Console.WriteLine("17: Select all orders along with their details, customer, employee, product, etc. in DB");
+            Console.WriteLine("18: Select all paid orders in DB"); 
+            Console.WriteLine("19: Select all suppliers in DB"); 
+            Console.WriteLine("20: Select all products which have been supplied in DB"); 
+            Console.WriteLine("21: Select all products along with their categories in DB"); 
+            Console.WriteLine("22: Select all products whose price is bigger or equal than a given one in DB"); 
+            Console.WriteLine("23: Select all orders whose payment method is the same as a given one in DB"); 
+            Console.WriteLine("24: Select all employees whose position is the same as a given one in DB"); 
+            Console.WriteLine("25: Select all orders with their products whose order quantity is less than or equal to a given one in DB");
+            Console.WriteLine("===========================================================================================");
+            Console.WriteLine();
 
             int number = -1;
             while (number != 0)
             {
                 try
                 {
+                    Console.Write("Enter number for command: ");
                     number = int.Parse(Console.ReadLine());
                     switch (number)
                     {
@@ -167,12 +186,74 @@
                                 Console.WriteLine("Payment cannot be inserted");
                             }
                             break;
+                        case 13:
+                            string result13 = this.dbManager.GetAllCategories();
+                            Console.WriteLine(result13);
+                            break;
+                        case 14:
+                            string result14 = this.dbManager.GetAllCustomers();
+                            Console.WriteLine(result14);
+                            break;
+                        case 15:
+                            string result15 = this.dbManager.GetAllEmployees();
+                            Console.WriteLine(result15);
+                            break;
+                        case 16:
+                            string result16 = this.dbManager.GetAllOrdersWithEmployeesAndCustomers();
+                            Console.WriteLine(result16);
+                            break;
+                        case 17:
+                            string result17 = this.dbManager.GetAllOrderDetailsWithEmployeesAndProducts();
+                            Console.WriteLine(result17);
+                            break;
+                        case 18:
+                            string result18 = this.dbManager.GetAllPaidOrders();
+                            Console.WriteLine(result18);
+                            break;
+                        case 19:
+                            string result19 = this.dbManager.GetAllSuppliers();
+                            Console.WriteLine(result19);
+                            break;
+                        case 20:
+                            string result20 = this.dbManager.GetAllSuppliedProducts();
+                            Console.WriteLine(result20);
+                            break;
+                        case 21:
+                            string result21 = this.dbManager.GetAllProductsWithCategories();
+                            Console.WriteLine(result21);
+                            break;
+                        case 22:
+                            string result22 = this.GetAllProductsWithBiggerPrice();
+                            Console.WriteLine(result22);
+                            break;
+                        case 23:
+                            string result23 = this.GetAllOrdersWithGivenPaymentMethod();
+                            Console.WriteLine(result23);
+                            break;
+                        case 24:
+                            string result24 = this.GetAllEmployeesWithGivenPosition();
+                            Console.WriteLine(result24);
+                            break;
+                        case 25:
+                            string result25 = this.GetAllOrdersWithLowerQuantity();
+                            Console.WriteLine(result25);
+                            break;
+                        default:
+                            Console.WriteLine("Invalid number for command. Try again!");
+                            break;
                     }
                 }
                 catch (FormatException)
                 {
                     Console.WriteLine("Invalid number format, try again");
                 }
+                catch (SqlException)
+                {
+                    Console.WriteLine("Exception in DB! Make sure you use the correct " +
+                        "DB (or create a new one)!");
+                }
+
+                Console.WriteLine();
             }
         }
 
@@ -189,7 +270,7 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
         private bool InsertProduct()
         {
@@ -210,7 +291,7 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
         private bool InsertCustomer()
         {
@@ -229,7 +310,7 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
         private bool InsertEmployee()
         {
@@ -248,7 +329,7 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
         private bool InsertSupplier()
         {
@@ -265,7 +346,7 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
         private bool InsertProductSupplier()
         {
@@ -282,7 +363,7 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
         private bool InsertOrder()
         {
@@ -303,7 +384,7 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
         private bool InsertOrderDetails()
         {
@@ -322,7 +403,7 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
         private bool InsertPayment()
         {
@@ -341,8 +422,44 @@
                 Console.WriteLine("Invalid number of parameters or parameters format!");
             }
 
-            return true;
+            return false;
         }
+        #endregion
+
+        #region SelectCommands
+
+        private string GetAllProductsWithBiggerPrice()
+        {
+            Console.Write("Type product price: ");
+            decimal price = decimal.Parse(Console.ReadLine());
+
+            return this.dbManager.GetAllProductsWithBiggerPrice(price);
+        }
+
+        private string GetAllOrdersWithGivenPaymentMethod()
+        {
+            Console.Write("Type order payment method: ");
+            string paymentMethod = Console.ReadLine();
+
+            return this.dbManager.GetAllOrdersWithGivenPaymentMethod(paymentMethod);
+        }
+
+        private string GetAllEmployeesWithGivenPosition()
+        {
+            Console.Write("Type employee position: ");
+            string position = Console.ReadLine();
+
+            return this.dbManager.GetAllEmployeesWithGivenPosition(position);
+        }
+
+        private string GetAllOrdersWithLowerQuantity()
+        {
+            Console.Write("Type order quantity: ");
+            decimal quantity = decimal.Parse(Console.ReadLine());
+
+            return this.dbManager.GetAllOrdersWithLowerQuantity(quantity);
+        }
+        
         #endregion
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace MarketVault
 {
     using Microsoft.Data.SqlClient;
+    using System.Text;
 
     public class DbManager
     {
@@ -18,7 +19,10 @@
             {
                 this.connection.Open();
                 this.command = new(query, connection);
-                this.command.ExecuteNonQuery();
+                using (this.command)
+                {
+                    this.command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -30,16 +34,125 @@
                 this.connection.Open();
                 this.command = new(query, connection);
 
-                for (int i = 0; i < parameters.Count; i++)
+                using (this.command)
                 {
-                    this.command.Parameters.AddWithValue(parameters[i], values[i]);
-                }
+                    for (int i = 0; i < parameters.Count; i++)
+                    {
+                        this.command.Parameters.AddWithValue(parameters[i], values[i]);
+                    }
 
-                this.command.ExecuteNonQuery();
+                    this.command.ExecuteNonQuery();
+                }
             }
         }
 
+        private string ExecuteReader(string query, List<string> columns, StringBuilder sb)
+        {
+            using (this.connection = new SqlConnection(this.connectionString))
+            {
+                this.connection.Open();
+                this.command = new(query, connection);
+
+                using (this.command)
+                {
+                    foreach (string column in columns)
+                    {
+                        sb.Append("[" + column + "] ");
+                    }
+
+                    sb.AppendLine();
+
+                    // ==== - length equal to all columns length + [ ] count + whitespaces count
+                    string equalSigns = new('=', (columns.Sum(c => c.Length + 2)) + columns.Count - 1);
+
+                    sb.AppendLine(equalSigns);
+
+                    SqlDataReader reader = this.command.ExecuteReader();
+
+                    if (!reader.HasRows)
+                    {
+                        sb.Clear();
+                        sb.AppendLine("No results found!");
+                        return sb.ToString().Trim();
+                    }
+
+                    using (reader)
+                    {
+                        while (reader.Read())
+                        {
+                            for (int i = 0; i < columns.Count; i++)
+                            {
+                                sb.Append("[" + reader[i] + "] ");
+                            }
+                            sb.AppendLine();
+                        }
+                    }
+
+                    sb.AppendLine(equalSigns);
+                }
+            }
+
+            return sb.ToString().Trim();
+        }
+
+        private string ExecuteReaderWithParameters(string query, List<string> columns, StringBuilder sb,
+            Dictionary<string, object> parameters)
+        {
+            using (this.connection = new SqlConnection(this.connectionString))
+            {
+                this.connection.Open();
+                this.command = new(query, connection);
+
+                using (this.command)
+                {
+                    foreach (var parameter in parameters)
+                    {
+                        this.command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                    }
+
+                    foreach (string column in columns)
+                    {
+                        sb.Append("[" + column + "] ");
+                    }
+
+                    sb.AppendLine();
+
+                    // ==== - length equal to all columns length + [ ] count + whitespaces count
+                    string equalSigns = new('=', (columns.Sum(c => c.Length + 2)) + columns.Count - 1);
+
+                    sb.AppendLine(equalSigns);
+
+                    SqlDataReader reader = this.command.ExecuteReader();
+
+                    if (!reader.HasRows)
+                    {
+                        sb.Clear();
+                        sb.AppendLine("No results found!");
+                        return sb.ToString().Trim();
+                    }
+
+                    using (reader)
+                    {
+                        while (reader.Read())
+                        {
+                            for (int i = 0; i < columns.Count; i++)
+                            {
+                                sb.Append("[" + reader[i] + "] ");
+                            }
+                            sb.AppendLine();
+                        }
+                    }
+
+                    sb.AppendLine(equalSigns);
+                }
+            }
+
+            return sb.ToString().Trim();
+        }
+
         #endregion
+
+        #region DBMethods
 
         private bool DatabaseExists()
         {
@@ -84,6 +197,8 @@
 
             return false;
         }
+
+        #endregion
 
         #region GetIdMethods
         private int? GetCategoryId(string name)
@@ -491,6 +606,253 @@
 
             return false;
         }
+        #endregion
+
+        #region GetAllMethods
+
+        public string GetAllCategories()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = "SELECT c.CategoryName FROM Categories AS c;";
+            List<string> columns = new() { "Category Name" };
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllCustomers()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = "SELECT c.FullName, c.Phone, c.Email FROM Customers AS c;";
+            List<string> columns = new() { "Full Name", "Phone Number", "Email" };
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllEmployees()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = "SELECT e.FullName, e.Position, e.Salary FROM Employees AS e;";
+            List<string> columns = new() { "Full Name", "Position", "Salary" };
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllOrdersWithEmployeesAndCustomers()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = "SELECT o.OrderDate, o.OrderNumber, c.FullName AS 'Customer Name', " +
+                "c.Phone AS 'Customer Phone', c.Email AS 'Customer Email',e.FullName AS 'Employee Name'," +
+                "e.Position AS 'Employee Position', e.Salary AS 'Employee Salary' " +
+                "FROM Orders AS o JOIN Customers AS c ON o.CustomerID = c.CustomerID " +
+                "JOIN Employees AS e ON o.EmployeeID = e.EmployeeID;";
+
+            List<string> columns = new() { "Order Date", "Order Number", "Customer Full Name",
+                "Customer Phone Number", "Customer Email", "Employee Full Name", 
+                "Employee Position", "Employee Salary"};
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllOrderDetailsWithEmployeesAndProducts()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = "SELECT o.OrderDate, o.OrderNumber," +
+                "c.FullName AS 'Customer Name', c.Phone AS 'Customer Phone', " +
+                "c.Email AS 'Customer Email', e.FullName AS 'Employee Name'," +
+                "e.Position AS 'Employee Position', e.Salary AS 'Employee Salary', " +
+                "od.Quantity, p.ProductName, p.Price AS 'Product Price', p.Stock AS 'Product Stock'," +
+                "ca.CategoryName FROM Orders AS o JOIN Customers AS c " +
+                "ON o.CustomerID = c.CustomerID JOIN Employees AS e " +
+                "ON o.EmployeeID = e.EmployeeID JOIN OrderDetails AS od " +
+                "ON od.OrderID = o.OrderID JOIN Products AS p ON p.ProductID = od.ProductID" +
+                " JOIN Categories AS ca ON p.CategoryID = ca.CategoryID;";
+
+            List<string> columns = new() { "Order Date", "Order Number", "Customer Full Name",
+                "Customer Phone Number", "Customer Email", "Employee Full Name",
+                "Employee Position", "Employee Salary", "Order Quantity", "Product Name",
+                "Product Price", "Product Stock", "Product Category Name"};
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllPaidOrders()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = "SELECT p.PaymentMethod, p.AmountPaid, " +
+                "o.OrderNumber, o.OrderDate FROM Payments AS p JOIN Orders AS o " +
+                "ON p.OrderID = o.OrderID;";
+
+            List<string> columns = new() { "Payment Method", "Amount Paid", "Order Number",
+                "Order Date"};
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllSuppliers()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = "SELECT s.SupplierName, s.ContactEmail FROM Suppliers AS s;";
+
+            List<string> columns = new() { "Supplier Name", "Supplier Email" };
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllSuppliedProducts()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = @"SELECT p.ProductName, p.Price AS 'Product price',
+                    p.Stock AS 'Product Stock', s.SupplierName, 
+                    s.ContactEmail AS 'Supplier Email'
+                    FROM ProductSuppliers AS ps
+                    JOIN Products AS p
+                    ON ps.ProductID = p.ProductID
+                    JOIN Suppliers AS s
+                    ON ps.SupplierID = s.SupplierID;";
+
+            List<string> columns = new() { "Product Name", "Product Price",
+                "Product Stock", "Supplier Full Name", "Supplier Email" };
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllProductsWithCategories()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = @"SELECT p.ProductName, p.Price, 
+                    p.Stock, c.CategoryName
+                    FROM Products AS p
+                    JOIN Categories AS c
+                    ON p.CategoryID = c.CategoryID;";
+
+            List<string> columns = new() { "Product Name", "Product Price",
+                "Product Stock", "Category Name"};
+
+            string output = ExecuteReader(query, columns, sb);
+
+            return output;
+        }
+
+        public string GetAllProductsWithBiggerPrice(decimal price)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = @"SELECT p.ProductName,
+                    p.Price, p.Stock, c.CategoryName
+                    FROM Products AS p
+                    JOIN Categories AS c
+                    ON p.CategoryID = c.CategoryID
+                    WHERE p.Price >= @price;";
+
+            List<string> columns = new() { "Product Name", "Product Price",
+                "Product Stock", "Category Name"};
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
+            {
+                { "@price", price }
+            };
+
+            string output = ExecuteReaderWithParameters(query, columns, sb, parameters);
+
+            return output;
+        }
+
+        public string GetAllOrdersWithGivenPaymentMethod(string paymentMethod)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = @"SELECT p.PaymentMethod, p.AmountPaid,
+                    o.OrderNumber, o.OrderDate
+                    FROM Payments AS p
+                    JOIN Orders AS o
+                    ON p.OrderID = o.OrderId
+                    WHERE p.PaymentMethod = @paymentMethod;";
+
+            List<string> columns = new() { "Payment Method", "Amount Paid",
+                "Order Number", "Order Date" };
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
+            {
+                { "@paymentMethod", paymentMethod }
+            };
+
+            string output = ExecuteReaderWithParameters(query, columns, sb, parameters);
+
+            return output;
+        }
+
+        public string GetAllEmployeesWithGivenPosition(string position)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = @"SELECT e.FullName, e.Salary
+                        FROM Employees AS e
+                        WHERE e.Position = @position;";
+
+            List<string> columns = new() { "Full Name", "Salary" };
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
+            {
+                { "@position", position }
+            };
+
+            string output = ExecuteReaderWithParameters(query, columns, sb, parameters);
+
+            return output;
+        }
+
+        public string GetAllOrdersWithLowerQuantity(decimal quantity)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string query = @"SELECT od.Quantity, p.ProductName,
+	                   p.Price, p.Stock, 
+	                   o.OrderDate, o.OrderNumber
+                FROM OrderDetails AS od
+                JOIN Products AS p
+                ON p.ProductID = od.ProductID
+                JOIN Orders AS o
+                ON o.OrderID = od.OrderID
+                WHERE od.Quantity <= @quantity;";
+
+            List<string> columns = new() { "Quantity", "Product Name",
+                "Product Price", "Product Stock", "Order Date", "Order Number" };
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
+            {
+                { "@quantity", quantity }
+            };
+
+            string output = ExecuteReaderWithParameters(query, columns, sb, parameters);
+
+            return output;
+        }
+        
         #endregion
     }
 }
