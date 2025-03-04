@@ -6,7 +6,7 @@
     public class DbManager
     {
         // Change connection string according to yours
-        private string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;" +
+        private string connectionString = @"Data Source=.;" +
             "Integrated Security=True;Trust Server Certificate=True;" +
             "Initial Catalog=master;";
         private SqlConnection connection;
