@@ -104,13 +104,11 @@ namespace PresentationLayer
                     }
                     else
                     {
-                        Console.WriteLine("Team in format: [Team Name] " +
-                           "[Team Country] [Team Foundation Year]");
+                        Console.WriteLine("Team: [Team Name]");
 
                         Console.WriteLine();
 
-                        Console.WriteLine($"[{team.TeamName}] [{team.Country}] " +
-                               $"[{team.FoundationYear}]");
+                        Console.WriteLine($"[{team.TeamName}]");
                     }
                 }
                 else if (command == 5)
@@ -140,15 +138,73 @@ namespace PresentationLayer
                 }
                 else if (command == 6)
                 {
+                    Console.Write("Enter id: ");
+                    int id = int.Parse(Console.ReadLine());
 
+                    var driver = await this.driverController.GetDriverById(id);
+
+                    if (driver == null)
+                    {
+                        Console.WriteLine("Driver with such id not found!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Drivers in DB in format: [Driver First Name] " +
+                            "[Driver Last Name] [Driver Birth Date] [Driver Nationality] " +
+                            "[Driver Team Name]");
+
+                        Console.WriteLine();
+
+                        Console.WriteLine($"[{driver.FirstName}] [{driver.LastName}] " +
+                               $"[{driver.BirthDate}] [{driver.Nationality}] " +
+                               $"[{driver.Team.TeamName}]");
+                    }
                 }
                 else if (command == 7)
                 {
+                    Console.Write("Enter last name: ");
+                    string lastName = Console.ReadLine();
 
+                    var driver = await this.driverController.GetDriverByLastName(lastName);
+
+                    if (driver == null)
+                    {
+                        Console.WriteLine("Driver with such last name not found!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Drivers in DB in format: [Driver First Name] " +
+                            "[Driver Last Name]");
+
+                        Console.WriteLine();
+
+                        Console.WriteLine($"[{driver.FirstName}] [{driver.LastName}]");
+                    }
                 }
                 else if (command == 8)
                 {
+                    Console.Write("Enter nationality: ");
+                    string nationality = Console.ReadLine();
 
+                    var drivers = await this.driverController
+                        .GetDriversByNationality(nationality);
+
+                    if (!drivers.Any())
+                    {
+                        Console.WriteLine("Drivers with such nationalities not found!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Drivers in DB in format: [Driver First Name] " +
+                            "[Driver Last Name]");
+
+                        Console.WriteLine();
+
+                        foreach (Driver driver in drivers)
+                        {
+                            Console.WriteLine($"[{driver.FirstName}] [{driver.LastName}]");
+                        }
+                    }
                 }
 
                 Console.WriteLine();
@@ -157,7 +213,7 @@ namespace PresentationLayer
             }
         }
 
-        private void Menu()
+        private static void Menu()
         {
             Console.WriteLine("0. End App!");
             Console.WriteLine("1. Get all teams");
