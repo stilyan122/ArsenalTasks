@@ -1,0 +1,5 @@
+﻿Name,ContactNumber,Email
+Supplier A,123456789,suppliera@email.com
+Supplier B,987654321,supplierb@email.com
+Supplier C,555123456,supplierc@email.com
+Supplier D,666789123,supplierd@email.com

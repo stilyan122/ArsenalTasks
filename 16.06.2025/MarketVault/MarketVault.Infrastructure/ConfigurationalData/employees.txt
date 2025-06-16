@@ -1,0 +1,6 @@
+﻿Name,Position,Salary
+John Doe,Manager,22500
+Jane Smith,Cashier,12500
+Tom Jones,Salesperson,11800
+Amy Adams,Stock Clerk,11400
+Bob Johnson,Security,12600

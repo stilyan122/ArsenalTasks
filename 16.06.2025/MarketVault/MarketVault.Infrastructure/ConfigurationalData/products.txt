@@ -1,0 +1,8 @@
+﻿Name,Price,Quantity,CategoryId
+Apple,1.20,100,1
+Banana,0.80,150,1
+Milk,1.50,80,2
+Bread,2.00,50,4
+Soap,1.00,200,3
+Shampoo,5.00,30,3,
+Pizza,12.50,20,4
