@@ -33,6 +33,9 @@
             AddCategory_Button = new Button();
             ShowAllCategories_Button = new Button();
             CategoriesByTotalStock_Button = new Button();
+            CategoryName_Input = new TextBox();
+            AddCategoryNameInput_Button = new Button();
+            CategoryName_Label = new Label();
             SuspendLayout();
             // 
             // CategoriesTitle_Label
@@ -102,12 +105,53 @@
             CategoriesByTotalStock_Button.Text = "📊 Categories by Total Stock";
             CategoriesByTotalStock_Button.UseVisualStyleBackColor = false;
             // 
+            // CategoryName_Input
+            // 
+            CategoryName_Input.Font = new Font("Cambria", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CategoryName_Input.Location = new Point(355, 406);
+            CategoryName_Input.Name = "CategoryName_Input";
+            CategoryName_Input.PlaceholderText = "Enter category name...";
+            CategoryName_Input.Size = new Size(304, 34);
+            CategoryName_Input.TabIndex = 7;
+            CategoryName_Input.Visible = false;
+            // 
+            // AddCategoryNameInput_Button
+            // 
+            AddCategoryNameInput_Button.BackColor = Color.FromArgb(196, 225, 230);
+            AddCategoryNameInput_Button.Cursor = Cursors.Hand;
+            AddCategoryNameInput_Button.Font = new Font("Cambria", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            AddCategoryNameInput_Button.ForeColor = SystemColors.ControlLightLight;
+            AddCategoryNameInput_Button.Location = new Point(354, 506);
+            AddCategoryNameInput_Button.Name = "AddCategoryNameInput_Button";
+            AddCategoryNameInput_Button.Size = new Size(305, 52);
+            AddCategoryNameInput_Button.TabIndex = 8;
+            AddCategoryNameInput_Button.Text = "📂 Add Category";
+            AddCategoryNameInput_Button.UseVisualStyleBackColor = false;
+            AddCategoryNameInput_Button.Visible = false;
+            AddCategoryNameInput_Button.Click += AddCategoryNameInput_Button_Click;
+            // 
+            // CategoryName_Label
+            // 
+            CategoryName_Label.AutoSize = true;
+            CategoryName_Label.Font = new Font("Cambria", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CategoryName_Label.ForeColor = SystemColors.ControlLightLight;
+            CategoryName_Label.Location = new Point(354, 351);
+            CategoryName_Label.Name = "CategoryName_Label";
+            CategoryName_Label.Size = new Size(199, 33);
+            CategoryName_Label.TabIndex = 9;
+            CategoryName_Label.Text = "Category Name";
+            CategoryName_Label.Visible = false;
+            CategoryName_Label.Click += CategoryName_Label_Click;
+            // 
             // CategoriesForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(141, 188, 199);
             ClientSize = new Size(1920, 1055);
+            Controls.Add(CategoryName_Label);
+            Controls.Add(AddCategoryNameInput_Button);
+            Controls.Add(CategoryName_Input);
             Controls.Add(CategoriesByTotalStock_Button);
             Controls.Add(ShowAllCategories_Button);
             Controls.Add(AddCategory_Button);
@@ -128,5 +172,9 @@
         private Button button2;
         private Button ShowAllCategories_Button;
         private Button CategoriesByTotalStock_Button;
+        private TextBox textBox1;
+        private TextBox CategoryName_Input;
+        private Button AddCategoryNameInput_Button;
+        private Label CategoryName_Label;
     }
 }

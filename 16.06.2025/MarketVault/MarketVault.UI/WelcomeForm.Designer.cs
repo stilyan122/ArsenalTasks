@@ -105,6 +105,7 @@
             ManageEmployees_Button.Text = "👨‍💼 Manage Employees";
             ManageEmployees_Button.UseVisualStyleBackColor = false;
             ManageEmployees_Button.Visible = false;
+            ManageEmployees_Button.Click += ManageEmployees_Button_Click;
             // 
             // ManageSuppliers_Button
             // 
@@ -146,6 +147,7 @@
             ManageOrders_Button.Text = "📑 Manage Orders";
             ManageOrders_Button.UseVisualStyleBackColor = false;
             ManageOrders_Button.Visible = false;
+            ManageOrders_Button.Click += ManageOrders_Button_Click;
             // 
             // WelcomeForm
             // 

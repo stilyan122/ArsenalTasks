@@ -33,6 +33,11 @@
             AddCustomer_Button = new Button();
             ShowAllCustomers_Button = new Button();
             CustomersWithNoOrders_Button = new Button();
+            CustomerName_Label = new Label();
+            CustomerName_Input = new TextBox();
+            CustomerEmail_Label = new Label();
+            CustomerEmail_Input = new TextBox();
+            AddCustomerInput_Button = new Button();
             SuspendLayout();
             // 
             // CustomersTitle_Label
@@ -103,12 +108,76 @@
             CustomersWithNoOrders_Button.UseVisualStyleBackColor = false;
             CustomersWithNoOrders_Button.Click += CategoriesByTotalStock_Button_Click;
             // 
+            // CustomerName_Label
+            // 
+            CustomerName_Label.AutoSize = true;
+            CustomerName_Label.Font = new Font("Cambria", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CustomerName_Label.ForeColor = SystemColors.ControlLightLight;
+            CustomerName_Label.Location = new Point(269, 305);
+            CustomerName_Label.Name = "CustomerName_Label";
+            CustomerName_Label.Size = new Size(207, 33);
+            CustomerName_Label.TabIndex = 10;
+            CustomerName_Label.Text = "Customer Name";
+            CustomerName_Label.Visible = false;
+            // 
+            // CustomerName_Input
+            // 
+            CustomerName_Input.Font = new Font("Cambria", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CustomerName_Input.Location = new Point(270, 351);
+            CustomerName_Input.Name = "CustomerName_Input";
+            CustomerName_Input.PlaceholderText = "Enter customer name...";
+            CustomerName_Input.Size = new Size(304, 34);
+            CustomerName_Input.TabIndex = 11;
+            CustomerName_Input.Visible = false;
+            // 
+            // CustomerEmail_Label
+            // 
+            CustomerEmail_Label.AutoSize = true;
+            CustomerEmail_Label.Font = new Font("Cambria", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CustomerEmail_Label.ForeColor = SystemColors.ControlLightLight;
+            CustomerEmail_Label.Location = new Point(270, 435);
+            CustomerEmail_Label.Name = "CustomerEmail_Label";
+            CustomerEmail_Label.Size = new Size(206, 33);
+            CustomerEmail_Label.TabIndex = 12;
+            CustomerEmail_Label.Text = "Customer Email";
+            CustomerEmail_Label.Visible = false;
+            // 
+            // CustomerEmail_Input
+            // 
+            CustomerEmail_Input.Font = new Font("Cambria", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CustomerEmail_Input.Location = new Point(270, 479);
+            CustomerEmail_Input.Name = "CustomerEmail_Input";
+            CustomerEmail_Input.PlaceholderText = "Enter customer email...";
+            CustomerEmail_Input.Size = new Size(304, 34);
+            CustomerEmail_Input.TabIndex = 13;
+            CustomerEmail_Input.Visible = false;
+            // 
+            // AddCustomerInput_Button
+            // 
+            AddCustomerInput_Button.BackColor = Color.FromArgb(196, 225, 230);
+            AddCustomerInput_Button.Cursor = Cursors.Hand;
+            AddCustomerInput_Button.Font = new Font("Cambria", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            AddCustomerInput_Button.ForeColor = SystemColors.ControlLightLight;
+            AddCustomerInput_Button.Location = new Point(266, 556);
+            AddCustomerInput_Button.Name = "AddCustomerInput_Button";
+            AddCustomerInput_Button.Size = new Size(305, 52);
+            AddCustomerInput_Button.TabIndex = 14;
+            AddCustomerInput_Button.Text = "➕ Add Customer";
+            AddCustomerInput_Button.UseVisualStyleBackColor = false;
+            AddCustomerInput_Button.Visible = false;
+            AddCustomerInput_Button.Click += AddCustomerInput_Buttom_Click;
+            // 
             // CustomersForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(141, 188, 199);
             ClientSize = new Size(1920, 1055);
+            Controls.Add(AddCustomerInput_Button);
+            Controls.Add(CustomerEmail_Input);
+            Controls.Add(CustomerEmail_Label);
+            Controls.Add(CustomerName_Input);
+            Controls.Add(CustomerName_Label);
             Controls.Add(CustomersWithNoOrders_Button);
             Controls.Add(ShowAllCustomers_Button);
             Controls.Add(AddCustomer_Button);
@@ -129,5 +198,10 @@
         private Button button2;
         private Button ShowAllCustomers_Button;
         private Button CustomersWithNoOrders_Button;
+        private Label CustomerName_Label;
+        private TextBox CustomerName_Input;
+        private Label CustomerEmail_Label;
+        private TextBox CustomerEmail_Input;
+        private Button AddCustomerInput_Button;
     }
 }
