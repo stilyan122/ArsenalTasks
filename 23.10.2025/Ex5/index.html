@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Калкулатор за доставка на пица</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="card">
+    <h1>Калкулатор за доставка на пица</h1>
+
+    <form id="pizza-form" novalidate>
+      <section class="group">
+        <h2>Вашите данни</h2>
+
+        <label for="name">Име</label>
+        <input id="name" name="name" type="text" required placeholder="Иван Иванов">
+
+        <label for="email">Имейл</label>
+        <input id="email" name="email" type="email" required placeholder="example@domain.com">
+      </section>
+
+      <section class="group">
+        <h2>Изберете пица</h2>
+        <label class="radio">
+          <input type="radio" name="pizza" value="Маргарита" data-price="8">
+          Маргарита (8 лв)
+        </label>
+        <label class="radio">
+          <input type="radio" name="pizza" value="Пеперони" data-price="10">
+          Пеперони (10 лв)
+        </label>
+        <label class="radio">
+          <input type="radio" name="pizza" value="Вегетарианска" data-price="9">
+          Вегетарианска (9 лв)
+        </label>
+      </section>
+
+      <section class="group">
+        <h2>Размер на пицата</h2>
+        <select id="size" name="size">
+          <option value="Малка" data-extra="0">Малка (+0 лв)</option>
+          <option value="Средна" data-extra="2">Средна (+2 лв)</option>
+          <option value="Голяма" data-extra="4">Голяма (+4 лв)</option>
+        </select>
+      </section>
+
+      <section class="group">
+        <h2>Брой пици</h2>
+        <input id="qty" name="qty" type="number" min="1" max="10" value="1" required>
+      </section>
+
+      <div class="actions">
+        <button type="submit" id="calc-btn">Изчисли цена</button>
+      </div>
+
+      <p id="result" class="result" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

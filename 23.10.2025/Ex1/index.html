@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="style.css">
+  <title>Service Feedback</title>
+</head>
+
+<body>
+  <p>Let us know how we can improve our service</p>
+
+  <form action="#" method="post">
+    <div class="row">
+      <label for="name">Name:</label>
+      <input id="name" name="name" type="text" required />
+    </div>
+
+    <div class="row">
+      <label for="email">Email:</label>
+      <input id="email" name="email" type="email" required />
+    </div>
+
+    <div class="row">
+      <label for="dob">Date of birth:</label>
+      <input id="dob" name="dob" type="date" placeholder="dd/mm/yyyy" />
+    </div>
+
+    <div class="row">
+      <label for="phone">Handphone:</label>
+      <input id="phone" name="phone" type="tel" placeholder="Phone Number"/>
+    </div>
+
+    <p class="question">Will you recommend the game to your friends?</p>
+    <div class="radios">
+      <label><input type="radio" name="recommend" value="Yes" required /> Yes</label><br />
+      <label><input type="radio" name="recommend" value="Maybe" /> Maybe</label><br />
+      <label><input type="radio" name="recommend" value="No" /> No</label>
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

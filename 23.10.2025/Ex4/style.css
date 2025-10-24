@@ -1,0 +1,146 @@
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  display: grid;
+  place-items: center;                 
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0fbff 50%, #f5f7ff 100%);
+  color: #111827;
+}
+
+form {
+  width: min(680px, 92vw);
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow:
+    0 12px 24px rgba(17,24,39,.10),
+    0 4px 8px rgba(17,24,39,.06);
+}
+
+fieldset {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 2px;
+}
+
+ol.plain,
+ol.plain.inner {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+ol.plain.inner { gap: 8px; }
+
+legend {
+  font-size: 1.125rem;          
+  font-weight: 600;
+  color: #1f2937;
+  padding: 0 6px;
+}
+
+label {
+  display: block;
+  font-size: .95rem;
+  color: #374151;
+  margin: 0 0 6px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+textarea {
+  width: 100%;
+  appearance: none;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+  outline: none;
+  transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+textarea {
+  resize: vertical;    
+  min-height: 120px;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #60a5fa; 
+  box-shadow: 0 0 0 4px rgba(59,130,246,.15); 
+}
+
+.cardtype {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 2px;
+}
+
+.cardtype legend {
+  font-size: 1rem;
+  color: #374151;
+}
+
+.cardtype label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 18px;
+  cursor: pointer;
+}
+
+.cardtype input[type="radio"] {
+  transform: translateY(1px);
+}
+
+.submit-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+button[type="submit"] {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 22px;
+  background: #2563eb;                
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s ease, background-color .15s ease, box-shadow .15s ease;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, .25);
+}
+
+button[type="submit"]:hover {
+  background: #1d4ed8;                
+  transform: scale(1.03);
+}
+
+button[type="submit"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(37,99,235,.25);
+}
+
+.bolded2{
+    font-weight: 500;
+}
+
+@media (max-width: 520px) {
+  form { padding: 20px; }
+  fieldset { padding: 14px; }
+  legend { font-size: 1.05rem; }
+}

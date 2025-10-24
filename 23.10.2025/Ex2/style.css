@@ -1,0 +1,43 @@
+body {
+  font-family: "Times New Roman", Times, serif;
+  margin: 8px;
+}
+
+legend, select {
+  display: inline;
+}
+
+fieldset{
+  margin: 0.01em;
+}
+
+.fieldset { 
+  margin-bottom: 12px; 
+}
+
+.first-fieldset{
+  border:none;
+  padding:0;
+  display: flex;
+  gap: 10px;
+}
+
+.first-fieldset label {
+  display: contents; 
+}
+
+h2 { 
+  margin: 12px 0 8px;
+ }
+
+textarea { 
+  resize: vertical; 
+}
+
+button {
+  margin-top: 8px; 
+}
+
+.buttons {
+  margin: 1em;
+}

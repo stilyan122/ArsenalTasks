@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Checkout Form</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form action="#" method="post">
+
+    <fieldset>
+      <legend>Your details</legend>
+      <ol class="plain">
+        <li>
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="First and last name">
+        </li>
+        <li>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="example@domain.com">
+        </li>
+        <li>
+          <label for="phone">Phone</label>
+          <input id="phone" name="phone" type="tel" placeholder="Eg. +447500000000">
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset>
+      <legend>Delivery address</legend>
+      <ol class="plain" id="details">
+        <li>
+          <label for="address">Address</label>
+           <div class="addr-box">
+                <textarea id="address" name="address" rows="6" cols="28"></textarea>
+            </div>
+        </li>
+        <li>
+          <label for="postcode">Post code</label>
+          <input id="postcode" name="postcode" type="text">
+        </li>
+        <li>
+          <label for="country">Country</label>
+          <input id="country" name="country" type="text">
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset>
+      <legend>Card details</legend>
+      <ol class="plain">
+        <li>
+          <fieldset class="cardtype">
+            <legend>Card type</legend>
+            <ol class="plain inner">
+              <li><label><input type="radio" name="card_type" value="VISA"> VISA</label></li>
+              <li><label><input type="radio" name="card_type" value="AmEx"> AmEx</label></li>
+              <li><label><input type="radio" name="card_type" value="Mastercard"> Mastercard</label></li>
+            </ol>
+          </fieldset>
+        </li>
+        <li>
+          <label for="cardnum">Card number</label>
+          <input id="cardnum" name="cardnum" type="text">
+        </li>
+        <li>
+          <label for="cvc">Security code</label>
+          <input id="cvc" name="cvc" type="text">
+        </li>
+        <li>
+          <label for="cardname">Name on card</label>
+          <input id="cardname" name="cardname" type="text" placeholder="Exact name as on the card">
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset>
+        <div class="submit-row">
+            <button type="submit">Buy it!</button>
+        </div>
+    </fieldset>
+
+  </form>
+</body>
+</html>

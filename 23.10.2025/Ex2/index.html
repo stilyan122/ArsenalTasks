@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Escape Room Feedback</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form action="#" method="post">
+    <fieldset class="first-fieldset">
+      <div>
+        <legend>*First time playing Escape Room?</legend>
+      </div>
+
+      <div>
+        <select id="first-time" name="first_time" required>
+          <option value="" selected disabled>Select an option</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div>
+        <legend>*Which game you played?</legend>
+      </div>
+      <div class="buttons">
+        <label><input type="checkbox" name="game" value="Exodus"> Exodus</label><br>
+        <label><input type="checkbox" name="game" value="Alcatraz"> Alcatraz</label><br>
+        <label><input type="checkbox" name="game" value="Aokigahara"> Aokigahara</label><br>
+        <label><input type="checkbox" name="game" value="Mausoleum"> Mausoleum</label><br>
+        <label><input type="checkbox" name="game" value="Castiglione"> Castiglione</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="recommend-fieldset">
+      <div>
+        <legend>Will you recommend the game to your friends?</legend>
+      </div>
+      <div class="buttons">
+        <label><input type="radio" name="recommend" value="Yes" required> Yes</label><br>
+        <label><input type="radio" name="recommend" value="Maybe"> Maybe</label><br>
+        <label><input type="radio" name="recommend" value="No"> No</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <h2>Any comments or suggestions?</h2>
+      <textarea id="comment" name="comment" rows="4" cols="35" placeholder="Enter your comment here..."></textarea>
+
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    </fieldset>
+  </form>
+</body>
+</html>
