@@ -1,0 +1,83 @@
+﻿@model MovieApp.ViewModels.HomeVm
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Начало";
+}
+
+<section class="hero text-center">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-3">Добре дошли в CinemaHub</h1>
+        <p class="lead mb-4">Нови заглавия и удобен график на прожекциите.</p>
+        <a href="#movies" class="btn btn-primary btn-lg me-2">Виж филмите</a>
+        <a href="#screenings" class="btn btn-outline-light btn-lg">График прожекции</a>
+    </div>
+</section>
+
+<section id="movies" class="py-5">
+    <div class="container">
+        <h2 class="mb-4">Филми</h2>
+        <div class="row g-4">
+            @foreach (var m in Model.FeaturedMovies)
+            {
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="card shadow-sm h-100 movie-card">
+                        @if (!string.IsNullOrWhiteSpace(m.PosterUrl))
+                        {
+                            <img src="@m.PosterUrl" class="card-img-top" alt="@m.Title poster" />
+                        }
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title mb-1">@m.Title</h5>
+                            <div class="text-muted mb-2">@m.Genre · @m.Year</div>
+                            @if (!string.IsNullOrWhiteSpace(m.Synopsis))
+                            {
+                                <p class="card-text small flex-grow-1">@m.Synopsis</p>
+                            }
+                            <a href="#screenings" class="btn btn-sm btn-primary mt-2">Виж прожекции</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (!Model.FeaturedMovies.Any())
+        {
+            <div class="alert alert-info mt-3">Няма налични филми.</div>
+        }
+    </div>
+</section>
+
+<section id="screenings" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="mb-4">Предстоящи прожекции</h2>
+        @if (Model.UpcomingScreenings.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Филм</th>
+                            <th>Начало</th>
+                            <th>Зала</th>
+                            <th>Цена</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.UpcomingScreenings)
+                        {
+                            var local = DateTime.SpecifyKind(s.StartTime, DateTimeKind.Utc).ToLocalTime();
+                            <tr>
+                                <td class="fw-semibold">@s.Movie?.Title</td>
+                                <td>@local</td>
+                                <td>@s.Hall</td>
+                                <td>@($"{s.Price:F2} лв.")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">Няма предстоящи прожекции.</div>
+        }
+    </div>
+</section>

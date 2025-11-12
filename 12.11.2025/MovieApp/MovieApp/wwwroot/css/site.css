@@ -1,0 +1,10 @@
+.hero {
+    background: radial-gradient(1200px 400px at 50% -100px, #212529 40%, #111 80%);
+    color: #fff;
+    padding: 6rem 0 4rem;
+}
+
+.movie-card img {
+    object-fit: cover;
+    height: 360px;
+}
